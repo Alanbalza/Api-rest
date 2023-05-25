@@ -1,12 +1,28 @@
+import { QueryError } from "mysql2";
 import {database} from "./DataBase";
 import { Producto } from "../dominio/ProductComputer";
 import { ProductRepository } from "../dominio/ProductRepository";
-import { QueryError } from "mysql2";
+
+
 
 export class productRepository implements ProductRepository {
-    getById(id: number): Promise <Producto | null> {
+
+    async getById(): Promise <Producto | null>{
+        const mysql = new database();
+        return await new Promise ((resolve, reject)=>{
+            mysql.connection.query("Select * From Product.Computer",(error: QueryError, rows: Producto)=>{
+                if (error){
+                    reject(error);
+                }else{
+                    resolve(rows)
+                }
+            })
+        })
+    };
+  
+    /* getById(id: number): Promise <Producto | null> {
         throw new Error('Method not implementd.');
-    }
+    } */
 
     async create(id: number, nombre: string, price: number): Promise<Producto> {
         const mysql = new database();
